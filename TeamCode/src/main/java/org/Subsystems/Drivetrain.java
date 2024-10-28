@@ -43,7 +43,7 @@ public class Drivetrain {
         fR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        fR.setDirection(DcMotorSimple.Direction.REVERSE);
+        bL.setDirection(DcMotorSimple.Direction.REVERSE);
         bR.setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
@@ -78,7 +78,7 @@ public class Drivetrain {
         double fRPow = power - strafe - turn;
         double bRPOw = power + strafe - turn;
 
-        setPowers(fLPow/norm, bLPow/norm, fRPow/norm, bRPOw/norm);
+        setPowers(-fLPow/norm, bLPow/norm, fRPow/norm, -bRPOw/norm);
     }
 
     public void setPowers(double fLPow, double bLPow, double fRPow, double bRPOw) {

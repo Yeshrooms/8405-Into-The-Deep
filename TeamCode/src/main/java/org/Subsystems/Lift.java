@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Subsystems;
+package org.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -11,14 +11,14 @@ public class Lift {
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    public void moveUp() {
-        lift.setPower(-0.3);
-    }
-    public void moveDown() {
-        lift.setPower(0.3);
+    public void move(boolean up, boolean down) {
+        if (up){
+            lift.setPower(-0.3);
+        } else if (down) {
+            lift.setPower(-0.3);
+        } else{
+            lift.setPower(0.0);
+        }
     }
 
-    public void stop() {
-        lift.setPower(0.0);
-    }
 }
