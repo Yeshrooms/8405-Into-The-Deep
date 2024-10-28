@@ -7,12 +7,13 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Claw {
     private static final double OPEN_POSITION = 0.5;
     private static final double CLOSE_POSITION = 0.0;
-    public boolean open = false;
+    public boolean open;
     public Servo claw;
 
     public void init(HardwareMap map) {
         claw = map.servo.get("claw");
-        claw.setPosition(0.0); // daniel gay!
+        open = false;
+        claw.setPosition(0.0);
     }
 
     public void move() {
