@@ -8,7 +8,7 @@ public class Extendo {
 
     public void init(HardwareMap map) {
         extendo = map.dcMotor.get("extendo");
-        extendo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        extendo.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void extend(float out, float in) {
@@ -22,3 +22,23 @@ public class Extendo {
     }
 
 }
+
+/*
+ * // Set the motor to RUN_TO_POSITION mode
+motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+// Set the target position
+motor.setTargetPosition(targetPosition);
+
+// Set the power to start moving
+motor.setPower(1.0); // Set to maximum power
+
+// Wait until the motor reaches the target position
+while (motor.isBusy()) {
+    // Optional: Monitor current position or other logic
+}
+
+// Stop the motor
+motor.setPower(0.0);
+
+ */
