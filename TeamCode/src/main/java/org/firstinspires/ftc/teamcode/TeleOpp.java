@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
-//e
 import org.Subsystems.Claw;
 import org.Subsystems.Extendo;
 import org.Subsystems.Lift;
@@ -16,12 +15,14 @@ public class TeleOpp extends LinearOpMode {
     private Lift lift = new Lift();
     private Extendo extendo = new Extendo();
     private Claw claw = new Claw();
+    // private Servo claw;
 
     @Override
     public void runOpMode() {
         drive.init(hardwareMap);
         lift.init(hardwareMap);
         extendo.init(hardwareMap);
+        // claw = hardwareMap.get(Servo.class, "claw");
         claw.init(hardwareMap);
 
         waitForStart();
@@ -42,6 +43,9 @@ public class TeleOpp extends LinearOpMode {
             if (gamepad1.a) {
                 claw.move();
             }
+            // if(gamepad1.a) {
+            //     claw.setPosition(0.0);
+            // }
 
 
             telemetry.addData("Power", power);
