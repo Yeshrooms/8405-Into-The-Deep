@@ -6,22 +6,20 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Claw {
     private static final double OPEN_POSITION = 0.5;
-    private static final double CLOSE_POSITION = 0.0;
+    private static final double CLOSE_POSITION = 0.33;
     public boolean open;
     public Servo claw;
 
     public void init(HardwareMap map) {
-        claw = map.servo.get("claw");
+        claw = map.get(Servo.class, "claw");
         open = false;
-        claw.setPosition(0.0);
+        claw.setPosition(0.33);
     }
 
-    public void move() {
-        if(open) {
-            open = false;
-            this.close();
-        } else {
-            open = true;
+    public void move(boolean a, boolean b) {
+        if(a) {
+            this.open();
+        } else if (b){
             this.open();
         }
     }

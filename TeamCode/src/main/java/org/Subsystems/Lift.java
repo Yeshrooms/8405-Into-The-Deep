@@ -8,17 +8,23 @@ public class Lift {
 
     public void init(HardwareMap map) {
         lift = map.dcMotor.get("lift");
-        lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void move(boolean up, boolean down) {
+    public void move(boolean up, boolean down, double ff) {
         if (up){
-            lift.setPower(-0.3);
+            lift.setPower(-0.5);
         } else if (down) {
-            lift.setPower(-0.3);
+            lift.setPower(0.5);
         } else{
-            lift.setPower(0.0);
+            lift.setPower(-ff);
         }
+    }
+
+    public int position() {
+        return lift.getCurrentPosition();
     }
 
 }

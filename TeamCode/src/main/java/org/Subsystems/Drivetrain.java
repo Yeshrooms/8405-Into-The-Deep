@@ -22,10 +22,10 @@ public class Drivetrain {
     public IMU imu;
 
     public void init(HardwareMap map) {
-        fL = map.dcMotor.get("frontLeft");
-        bL = map.dcMotor.get("backLeft");
-        fR = map.dcMotor.get("frontRight");
-        bR = map.dcMotor.get("backRight");
+        fL = map.dcMotor.get("leftFront");
+        bL = map.dcMotor.get("leftBack");
+        fR = map.dcMotor.get("rightFront");
+        bR = map.dcMotor.get("rightBack");
 //        encoder = new Encoder(map.get(DcMotorEx.class, "frontLeft"));
 //        encoder2 = new Encoder(map.get(DcMotorEx.class, "backRight"));
 //        imu = map.get(IMU.class, "imu");
@@ -50,6 +50,10 @@ public class Drivetrain {
 
     public double getHeading(){
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+    }
+
+    public int getPosition(){
+        return fL.getCurrentPosition();
     }
 
 //    public double get1Position() {
