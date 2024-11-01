@@ -49,6 +49,7 @@ public class TeleOpp extends LinearOpMode {
             double ff = Math.cos(Math.toRadians(drive.getPosition()) / ticks_in_degree)) * f;
 
             int liftPos = lift.position();
+            //e
 
             lift.move(gamepad1.right_bumper, gamepad1.left_bumper, ff);
 
