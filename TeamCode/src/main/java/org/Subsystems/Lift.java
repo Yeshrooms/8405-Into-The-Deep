@@ -15,9 +15,9 @@ public class Lift {
 
     public void move(boolean up, boolean down, double ff) {
         if (up){
-            lift.setPower(-0.5);
+            lift.setPower(-0.2);
         } else if (down) {
-            lift.setPower(0.5);
+            lift.setPower(0.2);
         } else{
             lift.setPower(-ff);
         }

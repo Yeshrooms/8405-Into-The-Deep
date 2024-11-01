@@ -13,7 +13,7 @@ public class Extendo {
 
     public void extend(float out, float in) {
         if (out > 0){
-            extendo.setPower(-0.4);
+            extendo.setPower(-1);
         } else if (in > 0) {
             extendo.setPower(0.4);
         } else{

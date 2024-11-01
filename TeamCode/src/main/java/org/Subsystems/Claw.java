@@ -20,7 +20,7 @@ public class Claw {
         if(a) {
             this.open();
         } else if (b){
-            this.open();
+            this.close();
         }
     }
 

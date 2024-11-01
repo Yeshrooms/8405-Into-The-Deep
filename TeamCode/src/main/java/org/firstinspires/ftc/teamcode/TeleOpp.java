@@ -46,7 +46,7 @@ public class TeleOpp extends LinearOpMode {
 
             drive.move(power, strafe, turn);
 
-            double ff = Math.cos(Math.toRadians(drive.getPosition()) / ticks_in_degree)) * f;
+            double ff = Math.cos(Math.toRadians((drive.getPosition()) / ticks_in_degree)) * f;
 
             int liftPos = lift.position();
             //e
