@@ -31,7 +31,9 @@ public class Drivetrain {
 //        imu = map.get(IMU.class, "imu");
 
         fL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
-        bR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+        bR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
+        fR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);// Reset the motor encoder
 
         fL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         bL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -53,7 +55,7 @@ public class Drivetrain {
     }
 
     public int getPosition(){
-        return fL.getCurrentPosition();
+        return bL.getCurrentPosition();
     }
 
 //    public double get1Position() {

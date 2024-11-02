@@ -51,7 +51,7 @@ public class TeleOpp extends LinearOpMode {
             int liftPos = lift.position();
             //e
 
-            lift.move(gamepad1.right_bumper, gamepad1.left_bumper, ff);
+            lift.move(gamepad1.right_bumper, gamepad1.left_bumper, ff, drive.getPosition());
 
             extendo.extend(gamepad1.right_trigger, gamepad1.left_trigger);
 

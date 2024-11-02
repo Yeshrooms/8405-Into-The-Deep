@@ -13,12 +13,12 @@ public class Lift {
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void move(boolean up, boolean down, double ff) {
-        if (up){
+    public void move(boolean up, boolean down, double ff, int position) {
+        if (up && position < 440){
             lift.setPower(-0.2);
         } else if (down) {
             lift.setPower(0.2);
-        } else{
+        } else {
             lift.setPower(-ff);
         }
     }
