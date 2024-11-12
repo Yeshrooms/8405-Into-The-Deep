@@ -59,21 +59,18 @@ public class sadAuton extends LinearOpMode {
         drive.init(hardwareMap);
         odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
 
-//        lift.init(hardwareMap);
-//        claw.init(hardwareMap);
-//        double norm = 0.65;
-
         waitForStart();
-
 
         /* reset x and y values to 0
         reset heading to 0
-
-
-
-
+        pid move forward with angle correction to point
+        while lift move up and extend
+        while (error > CONST && other stuff finished){
+        float pow = pid.calc(error);
+        move(error0;
+        }
          */
 
-
     }
+
 }
