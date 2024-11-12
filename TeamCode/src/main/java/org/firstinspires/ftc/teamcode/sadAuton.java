@@ -13,27 +13,27 @@ import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity
 import org.firstinspires.ftc.teamcode.Subsystems.Claw;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.Subsystems.GoBildaPinpointDriver;
-//import org.firstinspires.ftc.teamcode.Subsystems.Lift;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Subsystems.GoBildaPinpointDriver;
-@Config
 
+@Config
 @Autonomous
 public class sadAuton extends LinearOpMode {
 
     private PIDController linearController;
     private PIDController angularController;
 
-    public double lp= 0, li = 0, ld = 0;
-    public double ap= 0, ai = 0, ad = 0;
+    public double lp= 0.0, li = 0.0, ld = 0.0;  
+    public double ap= 0.0, ai = 0.0, ad = 0.0;  
 
     GoBildaPinpointDriver odo;
-    double oldTime = 0;
+    Drivetrain drive;
 
+    public double targetDistance = 500; // mm
+    public double targetAngle = 0; // degrees
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -43,34 +43,56 @@ public class sadAuton extends LinearOpMode {
 
         odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
 
-        odo.setOffsets(-84.0, -168.0); //these are tuned for 3110-0002-0001 Product Insight #1
-
+        // configure
+        odo.setOffsets(-84.0, -168.0);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
-
         odo.resetPosAndIMU();
 
-
-
-        Drivetrain drive = new Drivetrain();
-//        Lift lift = new Lift();
-//        Claw claw = new Claw();
+        // init
+        drive = new Drivetrain();
         drive.init(hardwareMap);
-        odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
+        linearController = new PIDController(lp, li, ld);
+        angularController = new PIDController(ap, ai, ad);
 
         waitForStart();
 
-        /* reset x and y values to 0
-        reset heading to 0
-        pid move forward with angle correction to point
-        while lift move up and extend
-        while (error > CONST && other stuff finished){
-        float pow = pid.calc(error);
-        move(error0;
+        odo.resetPosAndIMU();
+
+        while (opModeIsActive()) {
+            odo.update();
+            Pose2D currentPosition = odo.getPosition();
+            double currentDistance = currentPosition.getX(DistanceUnit.MM);
+            double currentHeading = currentPosition.getHeading(AngleUnit.DEGREES);
+
+            // distance
+            double distanceError = targetDistance - currentDistance;
+            double forwardPower = linearController.calculate(distanceError);
+
+            // angle
+            double angleError = targetAngle - currentHeading;
+            double anglePower = angularController.calculate(angleError);
+
+            // maths more like meths
+            double leftPower = forwardPower - anglePower;
+            double rightPower = forwardPower + anglePower;
+            drive.setPowers(leftPower, leftPower, rightPower, rightPower);
+
+
+            telemetry.addData("Current distance", currentDistance);
+            telemetry.addData("Distance error", distanceError);
+            telemetry.addData("Current heading", currentHeading);
+            telemetry.addData("Heading error", angleError);
+            telemetry.addData("Left power", leftPower);
+            telemetry.addData("Right power", rightPower);
+            telemetry.update();
+
+            if (Math.abs(distanceError) < 5 && Math.abs(angleError) < 1) {
+                break;
+            }
         }
-         */
-
+        drive.setPowers(0.0);
     }
-
 }
+
+
