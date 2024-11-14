@@ -8,7 +8,7 @@ public class Extendo {
 
     public void init(HardwareMap map) {
         extendo = map.dcMotor.get("extendo");
-        extendo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        extendo.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void extend(float out, float in) {
@@ -24,6 +24,7 @@ public class Extendo {
     public void retract(){
         extendo.setPower(0.4);
     }
+
 
     public void out(){
         extendo.setPower(-0.3);

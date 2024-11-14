@@ -20,7 +20,7 @@ public class TeleOpp extends LinearOpMode {
 
     private Drivetrain drive = new Drivetrain();
 //    private Lift lift = new Lift();
-//    private Extendo extendo = new Extendo();
+    private Extendo extendo = new Extendo();
 //    private Claw claw = new Claw();
 
     public static double f = 0.00;
@@ -35,7 +35,7 @@ public class TeleOpp extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         drive.init(hardwareMap);
 //        lift.init(hardwareMap);
-//        extendo.init(hardwareMap);
+        extendo.init(hardwareMap);
 //        // claw = hardwareMap.get(Servo.class, "claw");
 //        claw.init(hardwareMap);
 //        int lastPos = 0;
@@ -59,7 +59,7 @@ public class TeleOpp extends LinearOpMode {
 //
 //            lift.move(gamepad1.right_bumper, gamepad1.left_bumper, ff, drive.getPosition());
 //
-//            extendo.extend(gamepad1.right_trigger, gamepad1.left_trigger);
+            extendo.extend(gamepad1.right_trigger, gamepad1.left_trigger);
 //
 //            claw.move(gamepad1.a, gamepad1.x);
 //

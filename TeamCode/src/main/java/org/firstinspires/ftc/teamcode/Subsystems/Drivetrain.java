@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -20,6 +20,35 @@ public class Drivetrain {
     public static double WHEEL_RADIUS_INCHES = 1.88976;
     public static double TICKS_PER_REV = 537.6;
     public IMU imu;
+
+    public static double p = 0.0, i = 0.0, d = 0.0;
+    private PIDController controller;
+
+    private GoBildaPinpointDriver odo;
+
+    public static int TO_BAR_1 = 0, AWAY_BAR_1 = 0, RIGHT_BLOCK_1 = 0, UP_BLOCK = 0, RIGHT_BLOCK_2 = 0, PUSH_BLOCK = 0;
+
+
+    public enum DriveStates {
+        TO_BAR_1,
+        AWAY_BAR_1,
+        RIGHT_BLOCK_1,
+        UP_BLOCK,
+        RIGHT_BLOCK_2,
+        PUSH_BLOCK,
+    }
+
+    public static int ZERO = 0, THIRTY = 30, SIXTY = 60, NINETY = 90, FOURTY_FIVE = 45, TWENTY = 20;
+
+
+    public enum AngleStates {
+        ZERO,
+        THIRTY,
+        SIXTY,
+        NINETY,
+        FOURTY_FIVE,
+        TWENTY,
+    }
 
     public void init(HardwareMap map) {
         fL = map.dcMotor.get("leftFront");
@@ -48,7 +77,48 @@ public class Drivetrain {
         bL.setDirection(DcMotorSimple.Direction.REVERSE);
         bR.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        controller = new PIDController(p, i ,d);
+
+        odo = map.get(GoBildaPinpointDriver.class,"odo");
+
+        // configure
+        odo.setOffsets(-84.0, -168.0);
+        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        odo.resetPosAndIMU();
+
     }
+
+//    public int loop(){
+//        controller.setPID(p, i, d);
+//        //            odo.update();
+////            Pose2D currentPosition = odo.getPosition();
+////            double currentDistance = currentPosition.getX(DistanceUnit.MM);
+////            double currentHeading = currentPosition.getHeading(AngleUnit.DEGREES);
+////
+////            // distance
+////            double distanceError = targetDistance - currentDistance;
+////            double forwardPower = linearController.calculate(distanceError);
+////
+////            // angle
+////            double angleError = targetAngle - currentHeading;
+////            double anglePower = angularController.calculate(angleError);
+////
+////            // maths more like meths
+////            double leftPower = forwardPower - anglePower;
+////            double rightPower = forwardPower + anglePower;
+////            drive.setPowers(leftPower, leftPower, rightPower, rightPower);
+//        int pos = .position();
+//        double pid = controller.calculate(pos, target);
+//        double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * f;
+//
+//        double power = pid + ff;
+//
+//        lift.setPower(power);
+//        telemetry.addData("pos", pos);
+//        telemetry.addData("power", power);
+//        telemetry.update();
+//    }
 
     public double getHeading(){
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);

@@ -19,14 +19,15 @@ public class Lift extends SubsystemBase {
 
     private PIDController controller;
     public LiftStates liftStates = LiftStates.DOWN;
-    public static double p = 0, i = 0, d = 0;
+    public static double p = 0.003, i = 0, d = 0;
     public static double f = 0;
     public static int target = 0;
-    private final double ticks_in_degree = 700 / 180.0;
+    private final double ticks_in_degree = 1425.1 / 360.0;
     public static boolean isUp = false;
 
 
-    public static int DOWN = 0, AUTON_POS_LOW = 800, AUTON_POS = 900, POS1_POS = 850, POS2_POS = 1750, POS3_POS = 1500;
+    public static int DOWN = 0, AUTON_POS_LOW = 0, AUTON_POS = 350, POS1_POS = 0, POS2_POS = 0, POS3_POS = 0;
+
 
     public enum LiftStates {
         DOWN,
@@ -39,13 +40,13 @@ public class Lift extends SubsystemBase {
 
     //FIX THIS!!!!
 
-    public void runOpMode(HardwareMap map) {
+
+    public void init(HardwareMap map) {
         lift = map.dcMotor.get("lift");
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        controller = new PIDController(p, i, d);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        controller = new PIDController(p, i, d);
+//        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 
     public void update(LiftStates state) {
@@ -77,7 +78,7 @@ public class Lift extends SubsystemBase {
         }
     }
 
-    public void loop() {
+    public int loop() {
         controller.setPID(p, i, d);
         int pos = lift.getCurrentPosition();
         double pid = controller.calculate(pos, target);
@@ -91,9 +92,10 @@ public class Lift extends SubsystemBase {
             lift.setPower(power);
             lift.setPower(power);
         }
-        telemetry.addData("pos", pos);
-        telemetry.addData("power", power);
-
+        return (target - pos);
+//        telemetry.addData("pos", pos);
+//        telemetry.addData("power", power);
+//        telemetry.update();
     }
 
     public void move(boolean up, boolean down, double ff, int position) {
@@ -117,5 +119,10 @@ public class Lift extends SubsystemBase {
     public int position() {
         return lift.getCurrentPosition();
     }
+
+    public void setPower(double power){
+        lift.setPower(power);
+    }
+
 
 }
