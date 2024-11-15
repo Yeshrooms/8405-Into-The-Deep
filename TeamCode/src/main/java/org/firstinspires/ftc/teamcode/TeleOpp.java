@@ -36,12 +36,12 @@ public class TeleOpp extends LinearOpMode {
     public void runOpMode() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         drive.init(hardwareMap);
-//        lift.init(hardwareMap);
+       lift.init(hardwareMap);
         extendo.init(hardwareMap);
         clawrotate.init(hardwareMap);
-//        // claw = hardwareMap.get(Servo.class, "claw");
-//        claw.init(hardwareMap);
-//        int lastPos = 0;
+       // claw = hardwareMap.get(Servo.class, "claw");
+       claw.init(hardwareMap);
+       int lastPos = 0;
 
         waitForStart();
 
@@ -53,18 +53,18 @@ public class TeleOpp extends LinearOpMode {
             double turn = gamepad1.right_stick_x;
 
             drive.move(power, strafe, turn);
-//            lastPos = drive.getPosition();
+           lastPos = drive.getPosition();
 
-//            double ff = Math.cos(Math.toRadians((lastPos) / ticks_in_degree)) * f;
-//
-//            int liftPos = lift.position();
-//            //e
-//
-//            lift.move(gamepad1.right_bumper, gamepad1.left_bumper, ff, drive.getPosition());
+           double ff = Math.cos(Math.toRadians((lastPos) / ticks_in_degree)) * f;
+
+           int liftPos = lift.position();
+           //e
+
+           lift.move(gamepad1.right_bumper, gamepad1.left_bumper, ff, drive.getPosition());
 //
             extendo.extend(gamepad1.right_trigger, gamepad1.left_trigger);
 //
-//            claw.move(gamepad1.a, gamepad1.x);
+           claw.move(gamepad1.a, gamepad1.x);
 //
 
             if(gamepad1.b) { // left
@@ -76,15 +76,15 @@ public class TeleOpp extends LinearOpMode {
             telemetry.addData("Power", power);
             telemetry.addData("Strafe", strafe);
             telemetry.addData("Turn", turn);
-//            telemetry.addData("a pressed?", gamepad1.a);
-//            telemetry.addData("pressed", gamepad1.right_bumper);
-////            telemetry.addData("ff", ff);
-////            telemetry.addData("liftpos", lift.position());
-//            telemetry.addData("claw pos", claw.getPosition());
-//            telemetry.addData("lift pos", lift.position());
+           telemetry.addData("a pressed?", gamepad1.a);
+           telemetry.addData("pressed", gamepad1.right_bumper);
+           telemetry.addData("ff", ff);
+           telemetry.addData("liftpos", lift.position());
+           telemetry.addData("claw pos", claw.getPosition());
+           telemetry.addData("lift pos", lift.position());
             telemetry.addData("drive pos", drive.getPosition());
-//            telemetry.addData("ff", ff);
-//            telemetry.update();
+           telemetry.addData("ff", ff);
+           telemetry.update();
 
 
         }
