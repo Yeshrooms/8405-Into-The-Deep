@@ -1,12 +1,24 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+
+@Config
 
 public class Drivetrain {
     public DcMotor fL;
@@ -21,13 +33,22 @@ public class Drivetrain {
     public static double TICKS_PER_REV = 537.6;
     public IMU imu;
 
-    public static double p = 0.0, i = 0.0, d = 0.0;
-    private PIDController controller;
+    public Drivetrain.DriveStates driveStates = DriveStates.TO_BAR_1;
+
+    private int[] statesArray = {AWAY_BAR_1, -SIXTY};
+
+    public Pose2d[] points = {
+            new Pose2d(0.0, 20.0, Rotation2d.fromDegrees(0)),
+            new Pose2d(30.0, 20.0, Rotation2d.fromDegrees(0)),
+            new Pose2d(30.0, 48.0, Rotation2d.fromDegrees(0)),
+    };
 
     private GoBildaPinpointDriver odo;
+    public int target = 0;
 
-    public static int TO_BAR_1 = 0, AWAY_BAR_1 = 0, RIGHT_BLOCK_1 = 0, UP_BLOCK = 0, RIGHT_BLOCK_2 = 0, PUSH_BLOCK = 0;
+    public static double targetAngle = 0;
 
+    public static int TO_BAR_1 = 20, AWAY_BAR_1 = 7, RIGHT_BLOCK_1 = 0, UP_BLOCK = 0, RIGHT_BLOCK_2 = 0, PUSH_BLOCK = 0, ZERO = 0, THIRTY = 30, SIXTY = 60;
 
     public enum DriveStates {
         TO_BAR_1,
@@ -36,19 +57,66 @@ public class Drivetrain {
         UP_BLOCK,
         RIGHT_BLOCK_2,
         PUSH_BLOCK,
-    }
-
-    public static int ZERO = 0, THIRTY = 30, SIXTY = 60, NINETY = 90, FOURTY_FIVE = 45, TWENTY = 20;
-
-
-    public enum AngleStates {
         ZERO,
         THIRTY,
         SIXTY,
-        NINETY,
-        FOURTY_FIVE,
-        TWENTY,
     }
+
+    public void update(Drivetrain.DriveStates state) {
+        switch (state) {
+            case TO_BAR_1:
+                target = TO_BAR_1;
+                driveStates = state;
+                break;
+            case AWAY_BAR_1:
+                target = AWAY_BAR_1;
+                driveStates = state;
+                break;
+//            case POS1:
+//                target = POS1_POS;
+//                liftStates = state;
+//                break;
+//            case POS2:
+//                target = POS2_POS;
+//                liftStates = state;
+//                break;
+//            case POS3:
+//                target = POS3_POS;
+//                liftStates = state;
+//                break;
+//            case AUTON_POS_LOW:
+//                target = AUTON_POS_LOW;
+//                liftStates = state;
+            case ZERO:
+                targetAngle = ZERO;
+                driveStates = state;
+                break;
+            case SIXTY:
+                targetAngle = SIXTY;
+                driveStates = state;
+                break;
+            case THIRTY:
+                targetAngle = THIRTY;
+                driveStates = state;
+                break;
+        }
+    }
+
+    public void update(int index) {
+        if (index == 1){
+            targetAngle = statesArray[index];
+
+        } else {
+            target = statesArray[index];
+        }
+    }
+
+    private PIDController xLinearController;
+    private PIDController yLinearController;
+    private PIDController angularController;
+
+    public static double lp= 0.024, li = 0.0, ld = 0.0;
+    public static double ap= 0.0078, ai = 0.0, ad = 0.0;
 
     public void init(HardwareMap map) {
         fL = map.dcMotor.get("leftFront");
@@ -77,7 +145,6 @@ public class Drivetrain {
         bL.setDirection(DcMotorSimple.Direction.REVERSE);
         bR.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        controller = new PIDController(p, i ,d);
 
         odo = map.get(GoBildaPinpointDriver.class,"odo");
 
@@ -87,7 +154,72 @@ public class Drivetrain {
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
         odo.resetPosAndIMU();
 
+        yLinearController = new PIDController(lp, li, ld);
+        xLinearController = new PIDController(lp, li, ld);
+
+        angularController = new PIDController(ap, ai, ad);
     }
+
+    public boolean loop(Telemetry telemetry){
+//        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        odo.update();
+        Pose2d targetPose = points[target];
+        double xTarget = targetPose.getX();
+        double yTarget = targetPose.getY();
+        double targetAngle = Math.toDegrees(targetPose.getHeading());
+        Pose2D currentPosition = odo.getPosition();
+        double yDistance = -currentPosition.getY(DistanceUnit.INCH);
+        double xDistance = -currentPosition.getX(DistanceUnit.INCH);
+        double currentHeading = currentPosition.getHeading(AngleUnit.RADIANS);
+
+        // distance
+
+        double forwardPower = -yLinearController.calculate(yDistance, yTarget);
+        double strafePower = -xLinearController.calculate(xDistance, xTarget);
+
+        // angle
+        double anglePower = angularController.calculate(Math.toDegrees(currentHeading), targetAngle);
+
+
+        // Rotate the movement direction counter to the bot's rotation
+        double rotX = forwardPower * Math.cos(currentHeading) - strafePower * Math.sin(currentHeading);
+        double rotY = forwardPower * Math.sin(currentHeading) + strafePower * Math.cos(currentHeading);
+
+        rotX = rotX * 1.1;  // Counteract imperfect strafing
+
+        // Denominator is the largest motor power (absolute value) or 1
+        // This ensures all the powers maintain the same ratio,
+        // but only if at least one is out of the range [-1, 1]
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(anglePower), 1);
+        double frontLeftPower = (rotY + rotX + anglePower) / denominator;
+        double backLeftPower = (rotY - rotX + anglePower) / denominator;
+        double frontRightPower = (rotY - rotX - anglePower) / denominator;
+        double backRightPower = (rotY + rotX - anglePower) / denominator;
+
+        fL.setPower(frontLeftPower);
+        bL.setPower(backLeftPower);
+        fR.setPower(frontRightPower);
+        bR.setPower(backRightPower);
+
+        boolean atX = Math.abs(xTarget - xDistance) < 2;
+        boolean atY = Math.abs(yTarget - yDistance) < 2;
+        boolean atHeading = Math.abs(targetAngle - currentHeading) < 5;
+
+        telemetry.addData("xtar", xTarget);
+        telemetry.addData("ytar", yTarget);
+        telemetry.addData("headingtar", targetAngle);
+        telemetry.addData("x", xDistance);
+        telemetry.addData("y", yDistance);
+        telemetry.addData("heading", currentHeading);
+        telemetry.addData("forPow", forwardPower);
+        telemetry.addData("strPow", strafePower);
+        telemetry.addData("angPow", anglePower);
+        return atX && atY && atHeading;
+
+
+
+    }
+
 
 //    public int loop(){
 //        controller.setPID(p, i, d);

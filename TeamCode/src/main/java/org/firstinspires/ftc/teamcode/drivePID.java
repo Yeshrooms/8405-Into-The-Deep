@@ -19,22 +19,20 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 @TeleOp
 public class drivePID extends LinearOpMode{
 
-    public static double p = 0.003, i = 0, d = 0.0;
-
     private Drivetrain drive = new Drivetrain();
 
     private Lift lift = new Lift();
 
-    public static int targetDistance = 120;
+    public static int targetDistance = 20;
 
-    public static int targetAngle = 0;
+    public static double targetAngle = 0;
 
     private GoBildaPinpointDriver odo;
     private PIDController linearController;
     private PIDController angularController;
 
-    public double lp= 0.0, li = 0.0, ld = 0.0;
-    public double ap= 0.0, ai = 0.0, ad = 0.0;
+    public static double lp= 0.0, li = 0.0, ld = 0.0;
+    public static double ap= 0.0078, ai = 0.0, ad = 0.0;
 
 
     public void setTarget(int targetPos) {
@@ -54,7 +52,7 @@ public class drivePID extends LinearOpMode{
         // configure
         odo.setOffsets(-84.0, -168.0);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
         odo.resetPosAndIMU();
 
         linearController = new PIDController(lp, li, ld);
@@ -68,26 +66,34 @@ public class drivePID extends LinearOpMode{
 
             odo.update();
             Pose2D currentPosition = odo.getPosition();
-            double currentDistance = currentPosition.getX(DistanceUnit.MM);
+            double currentDistance = -currentPosition.getY(DistanceUnit.INCH);
             double currentHeading = currentPosition.getHeading(AngleUnit.DEGREES);
 
             // distance
             double distanceError = targetDistance - currentDistance;
-            double forwardPower = linearController.calculate(distanceError);
-
+            double forwardPower = linearController.calculate(currentDistance, targetDistance);
+            if (forwardPower > 0.6){
+                forwardPower = 0.6;
+            }
             // angle
             double angleError = targetAngle - currentHeading;
-            double anglePower = angularController.calculate(angleError);
+            double anglePower = angularController.calculate(currentHeading, targetAngle);
 
             // maths more like meths
             double leftPower = forwardPower - anglePower;
             double rightPower = forwardPower + anglePower;
-            drive.setPowers(leftPower, leftPower, rightPower, rightPower);
+
+            drive.setPowers(-leftPower, leftPower, rightPower, -rightPower);
 
             telemetry.addData("Current distance", currentDistance);
+            telemetry.addData("Current heading", currentHeading);
+            telemetry.addData("X", currentPosition.getX(DistanceUnit.INCH));
+            telemetry.addData("Y", currentPosition.getY(DistanceUnit.INCH));
             telemetry.addData("Distance error", distanceError);
             telemetry.addData("Current heading", currentHeading);
             telemetry.addData("Heading error", angleError);
+            telemetry.addData("Angle power", anglePower);
+            telemetry.addData("Forward power", forwardPower);
             telemetry.addData("Left power", leftPower);
             telemetry.addData("Right power", rightPower);
             telemetry.update();

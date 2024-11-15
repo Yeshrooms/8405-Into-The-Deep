@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+import static org.firstinspires.ftc.teamcode.Subsystems.Drivetrain.DriveStates.AWAY_BAR_1;
+import static org.firstinspires.ftc.teamcode.Subsystems.Drivetrain.DriveStates.TO_BAR_1;
 import static org.firstinspires.ftc.teamcode.Subsystems.Lift.LiftStates.AUTON;
 import static org.firstinspires.ftc.teamcode.Subsystems.Lift.LiftStates.DOWN;
 
@@ -26,75 +28,37 @@ import org.firstinspires.ftc.teamcode.Subsystems.Lift;
 @Autonomous
 public class sadAuton extends LinearOpMode {
 
-    private PIDController linearController;
-    private PIDController angularController;
-
-    public double lp= 0.0, li = 0.0, ld = 0.0;  
-    public double ap= 0.0, ai = 0.0, ad = 0.0;  
-
     GoBildaPinpointDriver odo;
     Drivetrain drive;
-    Lift lift;
+//    Lift lift;
 
-    public double targetDistance = 500; // mm
-    public double targetAngle = 0; // degrees
     private int tick = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
-
-        FtcDashboard dashboard = FtcDashboard.getInstance();
-        Telemetry dashboardTelemetry = dashboard.getTelemetry();
-
-//        odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
-//
-//        // configure
-//        odo.setOffsets(-84.0, -168.0);
-//        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-//        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
-//        odo.resetPosAndIMU();
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         // init
         drive = new Drivetrain();
-        lift = new Lift();
+//        lift = new Lift();
         drive.init(hardwareMap);
-        lift.init(hardwareMap);
-        linearController = new PIDController(lp, li, ld);
-        angularController = new PIDController(ap, ai, ad);
+//        lift.init(hardwareMap);
 
         waitForStart();
 
 //        odo.resetPosAndIMU();
-        lift.update(AUTON);
 
         while (opModeIsActive()) {
-            int error = lift.loop();
-            int driveError = drive.loop();
-            tick++;
-            if (Math.abs(error) < 8 && ){
-                lift.update(DOWN);
+            if (drive.loop(telemetry)) {
+                if (drive.target < drive.points.length){
+                    drive.target++;
+                }
+                else{
+                    drive.setPowers(0);
+                }
             }
-            if (tick > 1200){
-                lift.update(AUTON);
-            }
-//            odo.update();
-//            Pose2D currentPosition = odo.getPosition();
-//            double currentDistance = currentPosition.getX(DistanceUnit.MM);
-//            double currentHeading = currentPosition.getHeading(AngleUnit.DEGREES);
-//
-//            // distance
-//            double distanceError = targetDistance - currentDistance;
-//            double forwardPower = linearController.calculate(distanceError);
-//
-//            // angle
-//            double angleError = targetAngle - currentHeading;
-//            double anglePower = angularController.calculate(angleError);
-//
-//            // maths more like meths
-//            double leftPower = forwardPower - anglePower;
-//            double rightPower = forwardPower + anglePower;
-//            drive.setPowers(leftPower, leftPower, rightPower, rightPower);
-//
+            telemetry.update();
+
 //
 //            telemetry.addData("Current distance", currentDistance);
 //            telemetry.addData("Distance error", distanceError);
