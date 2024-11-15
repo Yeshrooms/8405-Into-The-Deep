@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Claw;
 import org.firstinspires.ftc.teamcode.Subsystems.Extendo;
 //import org.firstinspires.ftc.teamcode.Subsystems.Lift;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.Subsystems.ClawRotate;
 
 @Config
 @TeleOp
@@ -21,6 +22,7 @@ public class TeleOpp extends LinearOpMode {
     private Drivetrain drive = new Drivetrain();
 //    private Lift lift = new Lift();
     private Extendo extendo = new Extendo();
+    private ClawRotate clawrotate = new ClawRotate();
 //    private Claw claw = new Claw();
 
     public static double f = 0.00;
@@ -36,6 +38,7 @@ public class TeleOpp extends LinearOpMode {
         drive.init(hardwareMap);
 //        lift.init(hardwareMap);
         extendo.init(hardwareMap);
+        clawrotate.init(hardwareMap);
 //        // claw = hardwareMap.get(Servo.class, "claw");
 //        claw.init(hardwareMap);
 //        int lastPos = 0;
@@ -63,6 +66,13 @@ public class TeleOpp extends LinearOpMode {
 //
 //            claw.move(gamepad1.a, gamepad1.x);
 //
+
+            if(gamepad1.b) { // left
+                clawrotate.rotate(true, false);
+            } else if(gamepad1.y) { // right
+                clawrotate.rotate(false, true);
+            }
+            telemetry.addData("Claw position", clawrotate.getPosition());
             telemetry.addData("Power", power);
             telemetry.addData("Strafe", strafe);
             telemetry.addData("Turn", turn);
