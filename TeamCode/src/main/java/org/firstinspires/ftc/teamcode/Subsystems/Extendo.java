@@ -13,9 +13,9 @@ public class Extendo {
 
     public void extend(float out, float in) {
         if (out > 0){
-            extendo.setPower(-0.6);
+            extendo.setPower(-0.15);
         } else if (in > 0) {
-            extendo.setPower(0.4);
+            extendo.setPower(0.1);
         } else{
             extendo.setPower(0.0);
         }

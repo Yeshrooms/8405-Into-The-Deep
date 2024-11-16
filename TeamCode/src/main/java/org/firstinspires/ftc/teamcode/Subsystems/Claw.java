@@ -1,26 +1,28 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+@Config
 public class Claw {
-    private static final double OPEN_POSITION = 0.5;
-    private static final double CLOSE_POSITION = 0.1;
+    public static double OPEN_POSITION = 1;
+    public static double CLOSE_POSITION = 0.2;
     public boolean open;
     public Servo claw;
 
     public void init(HardwareMap map) {
         claw = map.get(Servo.class, "claw");
         open = false;
-        claw.setPosition(0.1);
+        claw.setPosition(CLOSE_POSITION);
     }
 
     public void move(boolean a, boolean b) {
         if(a) {
-            this.open();
+            claw.setPosition(OPEN_POSITION);
         } else if (b){
-            this.close();
+            claw.setPosition(CLOSE_POSITION);
         }
     }
 

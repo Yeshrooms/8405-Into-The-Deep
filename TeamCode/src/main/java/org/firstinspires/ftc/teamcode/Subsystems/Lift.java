@@ -26,8 +26,7 @@ public class Lift extends SubsystemBase {
     public static boolean isUp = false;
 
 
-    public static int DOWN = 0, AUTON_POS_LOW = 0, AUTON_POS = 350, POS1_POS = 0, POS2_POS = 0, POS3_POS = 0;
-
+    public static int DOWN = -20, AUTON_POS_LOW = -350, AUTON_POS = -460, POS1_POS = 0, POS2_POS = 0, POS3_POS = 0;
 
     public enum LiftStates {
         DOWN,
@@ -83,7 +82,7 @@ public class Lift extends SubsystemBase {
         int pos = lift.getCurrentPosition();
         double pid = controller.calculate(pos, target);
         double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * f;
-        double power = pid + ff;
+        double power = (pid + ff)/2.5;
         if (target == DOWN) {
             lift.setPower(0);
             lift.setPower(0);
