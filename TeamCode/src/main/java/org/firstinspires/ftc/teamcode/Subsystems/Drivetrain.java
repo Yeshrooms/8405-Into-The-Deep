@@ -38,14 +38,19 @@ public class Drivetrain {
     public static double norm = 1.4;
     public static double rightNorm = 1.3;
 
+
+
     public Pose2d[] points = {
-            new Pose2d(0.0,10.0,Rotation2d.fromDegrees(0)),
-            new Pose2d(0.0,11.0,Rotation2d.fromDegrees(0)),
-            new Pose2d(0.0,12.0,Rotation2d.fromDegrees(0)),
-            new Pose2d(0.0, TO_BAR_1, Rotation2d.fromDegrees(0)),
-//            new Pose2d(0.0, 15.0, Rotation2d.fromDegrees(0)),
-//            new Pose2d(0.0, 15.0, Rotation2d.fromDegrees(-90)),
+        new Pose2d(0.0, 10.0, Rotation2d.fromDegrees(0)),
+        new Pose2d(0.0, 11.0, Rotation2d.fromDegrees(0)),
+        new Pose2d(0.0, 12.0, Rotation2d.fromDegrees(0)),
+        new Pose2d(0.0, TO_BAR_1, Rotation2d.fromDegrees(0)),
+
+        // NEW: Park Points
+        new Pose2d(0.0, TO_BAR_1 * 0.25, Rotation2d.fromDegrees(90)), // move back then turn right
+        new Pose2d(0.0, (originalMovedDistance * 1.5), Rotation2d.fromDegrees(90)),
     };
+
 
     private GoBildaPinpointDriver odo;
     public double target = 0.0;
