@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 @Config
 public class ClawRotate {
     public static double INIT_POSITION = 0.36;
-    public static double LEFT_POSITION = 0.8;
+    public static double LEFT_POSITION = 0.4;
     public static double RIGHT_POSITION = 1;
 
     private Servo clawRotate;

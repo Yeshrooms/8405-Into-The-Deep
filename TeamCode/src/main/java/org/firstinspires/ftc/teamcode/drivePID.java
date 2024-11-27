@@ -21,8 +21,6 @@ public class drivePID extends LinearOpMode{
 
     private Drivetrain drive = new Drivetrain();
 
-    private Lift lift = new Lift();
-
     public static int targetDistance = 20;
 
     public static double targetAngle = 0;
@@ -31,7 +29,7 @@ public class drivePID extends LinearOpMode{
     private PIDController linearController;
     private PIDController angularController;
 
-    public static double lp= 0.0, li = 0.0, ld = 0.0;
+    public static double lp= 0.0305, li = 0.0, ld = 0.0;
     public static double ap= 0.0078, ai = 0.0, ad = 0.0;
 
 
@@ -43,7 +41,6 @@ public class drivePID extends LinearOpMode{
     @Override
     public void runOpMode() throws InterruptedException {
 
-        lift.init(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
 

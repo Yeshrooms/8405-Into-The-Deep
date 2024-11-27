@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
 public class Claw {
-    public static double OPEN_POSITION = 1;
-    public static double CLOSE_POSITION = 0.2;
+    public static double OPEN_POSITION = 0.65;
+    public static double CLOSE_POSITION = 0.42;
     public boolean open;
     public Servo claw;
 

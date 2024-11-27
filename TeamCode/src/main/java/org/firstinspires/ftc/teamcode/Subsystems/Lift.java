@@ -26,7 +26,7 @@ public class Lift extends SubsystemBase {
     public static boolean isUp = false;
 
 
-    public static int DOWN = -20, AUTON_POS_LOW = -350, AUTON_POS = -460, POS1_POS = 0, POS2_POS = 0, POS3_POS = 0;
+    public static int DOWN = -60, AUTON_POS_LOW = -350, AUTON_POS = -460, POS1_POS = 0, POS2_POS = 0, POS3_POS = 0;
 
     public enum LiftStates {
         DOWN,
@@ -77,24 +77,18 @@ public class Lift extends SubsystemBase {
         }
     }
 
-    public int loop() {
+    public boolean loop() {
         controller.setPID(p, i, d);
         int pos = lift.getCurrentPosition();
         double pid = controller.calculate(pos, target);
         double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * f;
         double power = (pid + ff)/2.5;
-        if (target == DOWN) {
-            lift.setPower(0);
-            lift.setPower(0);
-        }
-        else {
-            lift.setPower(power);
-            lift.setPower(power);
-        }
-        return (target - pos);
-//        telemetry.addData("pos", pos);
-//        telemetry.addData("power", power);
+        lift.setPower(power);
+//        telemetry.addData("lift pos", pos);
+//        telemetry.addData("lift power", power);
+//        telemetry.addData("lift error", target-pos);
 //        telemetry.update();
+        return ((target - pos) < 10);
     }
 
     public void move(boolean up, boolean down, double ff, int position) {
@@ -121,6 +115,10 @@ public class Lift extends SubsystemBase {
 
     public void setPower(double power){
         lift.setPower(power);
+    }
+
+    public double getPosition() {
+        return lift.getCurrentPosition();
     }
 
 
