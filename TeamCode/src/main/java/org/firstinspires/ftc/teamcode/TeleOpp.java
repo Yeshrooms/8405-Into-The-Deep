@@ -23,7 +23,6 @@ import org.firstinspires.ftc.teamcode.Subsystems.Lift;
 public class TeleOpp extends LinearOpMode {
 
 
-//    public static double powerMove = 0.0;
 
     private Drivetrain drive = new Drivetrain();
     private Lift lift = new Lift();

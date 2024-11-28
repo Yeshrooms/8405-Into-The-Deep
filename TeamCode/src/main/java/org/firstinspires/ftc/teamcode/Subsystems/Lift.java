@@ -26,7 +26,7 @@ public class Lift extends SubsystemBase {
     public static boolean isUp = false;
 
 
-    public static int DOWN = -60, AUTON_POS_LOW = -350, AUTON_POS = -460, POS1_POS = 0, POS2_POS = 0, POS3_POS = 0;
+    public static int DOWN = -40, AUTON_POS_LOW = -350, AUTON_POS = -460, POS1_POS = 0, POS2_POS = 0, POS3_POS = 0;
 
     public enum LiftStates {
         DOWN,

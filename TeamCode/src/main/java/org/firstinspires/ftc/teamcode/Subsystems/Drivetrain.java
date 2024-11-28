@@ -371,7 +371,7 @@ public class Drivetrain {
         double norm = 1;
         double fLPow = power + strafe + turn;
         double bLPow = power - strafe + turn;
-        double fRPow = power - strafe - turn;
+        double fRPow = (power - strafe - turn)*rightNorm;
         double bRPOw = power + strafe - turn;
 
         setPowers(-fLPow/norm, bLPow/norm, fRPow/norm, -bRPOw/norm);
