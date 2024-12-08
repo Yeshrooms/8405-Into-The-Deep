@@ -147,5 +147,9 @@ public class SparkFunOTOSDrive extends MecanumDrive {
         return new PoseVelocity2d(new Vector2d(otosVel.x, otosVel.y),otosVel.h);
     }
 
+    public Pose2d getPose() {
+        return pose;
+    }
+
 
 }

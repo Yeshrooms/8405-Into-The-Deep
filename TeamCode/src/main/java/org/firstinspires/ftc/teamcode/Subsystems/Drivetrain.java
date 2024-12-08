@@ -48,7 +48,7 @@ public class Drivetrain {
 
         // NEW: Park Points
         new Pose2d(0.0, TO_BAR_1 * 0.25, Rotation2d.fromDegrees(90)), // move back then turn right
-        new Pose2d(0.0, (originalMovedDistance * 1.5), Rotation2d.fromDegrees(90)),
+        new Pose2d(0.0, (TO_BAR_1 * 1.5), Rotation2d.fromDegrees(90)),
     };
 
 
