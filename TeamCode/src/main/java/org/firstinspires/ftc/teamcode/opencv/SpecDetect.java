@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.vision;
+package org.firstinspires.ftc.teamcode.opencv;
 
 import android.graphics.Canvas;
 
@@ -47,7 +47,7 @@ public class SpecDetect implements VisionProcessor {
     public void init(int width, int height, CameraCalibration calibration) {
         hsvImage = new Mat();
         redMask1 = new Mat();
-        redMask2 = new Mat();
+        redMask2 = new Mat(); // red just like taht
         yellowMask = new Mat();
         blueMask = new Mat();
         redMask = new Mat();
@@ -156,7 +156,7 @@ public class SpecDetect implements VisionProcessor {
         // combination based on mode
         Mat combinedMask = new Mat();
         switch (detectionMode) {
-            case ALL_COLORS:
+            case ALL:
                 Core.bitwise_or(redMask, yellowMask, combinedMask);
                 Core.bitwise_or(combinedMask, blueMask, combinedMask);
                 break;
