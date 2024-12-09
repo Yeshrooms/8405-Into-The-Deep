@@ -74,6 +74,7 @@ public class SpecDetect implements VisionProcessor {
         angle = result.second;
 
         //drawOutlineAndAngle(bgr, closestBlock, angle);
+        // dont call until drawonframe
 
         double distanceX = 0.0;
         double distanceY = 0.0;
