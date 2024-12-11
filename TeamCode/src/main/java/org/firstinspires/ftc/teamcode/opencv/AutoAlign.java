@@ -70,7 +70,7 @@ public class AutoAlign extends LinearOpMode {
                 .addProcessor(blockDetector)
                 .addProcessor(cameraStreamer)
                 .build();
-        double pos = 0.5;
+        double wristPos = 0.5;
         FtcDashboard.getInstance().startCameraStream(cameraStreamer, 0);
 
         waitForStart();
@@ -82,14 +82,14 @@ public class AutoAlign extends LinearOpMode {
                 if (90 < blockAngle && blockAngle < 180) {
                     double adjustment = 90 - (blockAngle - 90);
                     adjustment = adjustment / 90 / 20;
-                    pos -= adjustment;
+                    wristPos -= adjustment;
                 }
                 if (0 < blockAngle && blockAngle < 90) {
                     double adjustment = blockAngle / 90 / 20;
-                    pos += adjustment;
+                    wristPos += adjustment;
                 }
             }
-            servo.setPosition(pos);
+            servo.setwristPosition(wristPos);
             blockDetector.updatetelemetry();
 
             sleep(30);
