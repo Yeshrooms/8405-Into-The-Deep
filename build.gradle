@@ -28,7 +28,3 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation 'org.openftc:easyopencv:3.0.0'
-}
-
