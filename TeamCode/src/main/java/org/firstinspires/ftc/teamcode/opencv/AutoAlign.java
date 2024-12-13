@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.function.Continuation;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
-import org.firstinspires.ftc.teamcode.vision.SpecDetect;
+import org.firstinspires.ftc.teamcode.opencv.SpecDetect;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.android.Utils;
@@ -89,8 +89,8 @@ public class AutoAlign extends LinearOpMode {
                     wristPos += adjustment;
                 }
             }
-            servo.setwristPosition(wristPos);
-            blockDetector.updatetelemetry();
+//            servo.setwristPosition(wristPos); TO DO LATER ONCE WE GET CLAW SERVO
+            blockDetector.update();
 
             sleep(30);
         }
