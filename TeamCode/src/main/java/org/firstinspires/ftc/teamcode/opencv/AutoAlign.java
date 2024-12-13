@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.vision;
+package org.firstinspires.ftc.teamcode.opencv;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -26,19 +26,20 @@ import java.util.concurrent.atomic.AtomicReference;
 @Autonomous
 public class AutoAlign extends LinearOpMode {
 
-    public Servo armServo;
+    public Servo servo;
 
     @Override
     public void runOpMode() {
-        armServo = hardwareMap.get(Servo.class, "armServo");
+        servo = hardwareMap.get(Servo.class, "armServo");
         SpecDetect blockFinder = new SpecDetect(telemetry);
-        CameraProcessor cameraViewer = new CameraProcessor();
+        CameraStreamProcessor  cameraViewer = new CameraStreamProcessor ();
         AnalogInput wristSensor = hardwareMap.get(AnalogInput.class, "wristSensor");
         VisionPortal visionPortal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .addProcessor(blockFinder)
                 .addProcessor(cameraViewer)
                 .build();
+        // vision portal that connects webcam/ vision procesisng pipeline
 
         double armPosition = 0.5;
         FtcDashboard.getInstance().startCameraStream(cameraViewer, 0);
@@ -61,81 +62,44 @@ public class AutoAlign extends LinearOpMode {
                 }
             }
 
-            armServo.setPosition(armPosition);
-            blockFinder.updateTelemetry();
+            servo.setPosition(armPosition);
+            blockFinder.update();
             sleep(30);
         }
     }
 
-    public static class CameraProcessor implements VisionProcessor, CameraStreamSource {
+    public static class CameraStreamProcessor implements VisionProcessor, CameraStreamSource {
+        private final AtomicReference<Bitmap> lastFrame =
+                new AtomicReference<>(Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565));
 
-        private final AtomicReference<Bitmap> recentFrame = new AtomicReference<>(Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565));
 
         @Override
         public void init(int width, int height, CameraCalibration calibration) {
-            recentFrame.set(Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565));
+            lastFrame.set(Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565));
         }
+        // blank bitmap to hold camera feed
 
         @Override
         public Object processFrame(Mat frame, long captureTimeNanos) {
-            Bitmap bitmap = Bitmap.createBitmap(frame.width(), frame.height(), Bitmap.Config.RGB_565);
-            Utils.matToBitmap(frame, bitmap);
-            recentFrame.set(bitmap);
+            Bitmap b = Bitmap.createBitmap(frame.width(), frame.height(), Bitmap.Config.RGB_565);
+            Utils.matToBitmap(frame, b);
+            lastFrame.set(b);
             return null;
         }
+        // converts opencv mat frame into bitmap and stores
 
         @Override
         public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight,
                                 float scaleBmpPxToCanvasPx, float scaleCanvasDensity,
                                 Object userContext) {
-            // Do nothing
+            // do nothing, should be used to draw
         }
 
         @Override
         public void getFrameBitmap(Continuation<? extends Consumer<Bitmap>> continuation) {
-            continuation.dispatch(bitmapConsumer -> bitmapConsumer.accept(recentFrame.get()));
+            continuation.dispatch(bitmapConsumer -> bitmapConsumer.accept(lastFrame.get()));
         }
+        // returns last camera frame as bitmpa
 
     }
-<<<<<<< HEAD
-
-    @Override
-    public void runOpMode() {
-        servo = hardwareMap.get(Servo.class, "servo");
-        SpecDetect blockDetector = new SpecDetect(telemetry);
-        CameraProcessor cameraStreamer = new CameraProcessor();
-        AnalogInput wristSensor = hardwareMap.get(AnalogInput.class, "wristSensor");
-        VisionPortal visionPortal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .addProcessor(blockDetector)
-                .addProcessor(cameraStreamer)
-                .build();
-        double wristPos = 0.5;
-        FtcDashboard.getInstance().startCameraStream(cameraStreamer, 0);
-
-        waitForStart();
-
-        while (opModeIsActive()) {
-            RotatedRect detectedBlock = blockDetector.getClosestBlock();
-            Double blockAngle = blockDetector.getAngle();
-            if (blockDetector.getSize() > 5000) {
-                if (90 < blockAngle && blockAngle < 180) {
-                    double adjustment = 90 - (blockAngle - 90);
-                    adjustment = adjustment / 90 / 20;
-                    wristPos -= adjustment;
-                }
-                if (0 < blockAngle && blockAngle < 90) {
-                    double adjustment = blockAngle / 90 / 20;
-                    wristPos += adjustment;
-                }
-            }
-//            servo.setwristPosition(wristPos); TO DO LATER ONCE WE GET CLAW SERVO
-            blockDetector.update();
-
-            sleep(30);
-        }
-    }
 }
-=======
-}
->>>>>>> d340caff4067e2962a41607229d2c0bc2f4bc3ec

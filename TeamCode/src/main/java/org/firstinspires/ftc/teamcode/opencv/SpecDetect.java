@@ -63,7 +63,7 @@ public class SpecDetect implements VisionProcessor {
         // time in nanos
         Mat bgr = new Mat();
         if (inputFrame.channels() == 4) {
-            // rgba (4 channel) to gbr
+            // rgba (4 channel) to gbrSpecDetect
             Imgproc.cvtColor(inputFrame, bgr, Imgproc.COLOR_RGBA2BGR);
         } else {
             bgr = inputFrame;
