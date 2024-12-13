@@ -25,22 +25,62 @@ import java.util.concurrent.atomic.AtomicReference;
 
 @Autonomous
 public class AutoAlign extends LinearOpMode {
-    public Servo servo;
+
+    public Servo armServo;
+
+    @Override
+    public void runOpMode() {
+        armServo = hardwareMap.get(Servo.class, "armServo");
+        SpecDetect blockFinder = new SpecDetect(telemetry);
+        CameraProcessor cameraViewer = new CameraProcessor();
+        AnalogInput wristSensor = hardwareMap.get(AnalogInput.class, "wristSensor");
+        VisionPortal visionPortal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .addProcessor(blockFinder)
+                .addProcessor(cameraViewer)
+                .build();
+
+        double armPosition = 0.5;
+        FtcDashboard.getInstance().startCameraStream(cameraViewer, 0);
+
+        waitForStart();
+
+        while (opModeIsActive()) {
+            RotatedRect detectedObject = blockFinder.getClosestBlock();
+            Double objectAngle = blockFinder.getAngle();
+
+            if (blockFinder.getSize() > 5000) {
+                if (90 < objectAngle && objectAngle < 180) {
+                    double adjustment = 90 - (objectAngle - 90);
+                    adjustment = adjustment / 1800;
+                    armPosition -= adjustment;
+                }
+                if (0 < objectAngle && objectAngle < 90) {
+                    double adjustment = objectAngle / 1800;
+                    armPosition += adjustment;
+                }
+            }
+
+            armServo.setPosition(armPosition);
+            blockFinder.updateTelemetry();
+            sleep(30);
+        }
+    }
 
     public static class CameraProcessor implements VisionProcessor, CameraStreamSource {
-        private final AtomicReference<Bitmap> lastFrame = new AtomicReference<>(Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565));
+
+        private final AtomicReference<Bitmap> recentFrame = new AtomicReference<>(Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565));
 
         @Override
         public void init(int width, int height, CameraCalibration calibration) {
-            // match camera resolution, RGB_565 = 16 bit
-            lastFrame.set(Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565));
+            recentFrame.set(Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565));
         }
 
         @Override
         public Object processFrame(Mat frame, long captureTimeNanos) {
             Bitmap bitmap = Bitmap.createBitmap(frame.width(), frame.height(), Bitmap.Config.RGB_565);
             Utils.matToBitmap(frame, bitmap);
-            lastFrame.set(bitmap);
+            recentFrame.set(bitmap);
             return null;
         }
 
@@ -48,16 +88,16 @@ public class AutoAlign extends LinearOpMode {
         public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight,
                                 float scaleBmpPxToCanvasPx, float scaleCanvasDensity,
                                 Object userContext) {
-            // do nothing
+            // Do nothing
         }
 
         @Override
         public void getFrameBitmap(Continuation<? extends Consumer<Bitmap>> continuation) {
-            // gives latest frame to dashboard
-            continuation.dispatch(bitmapConsumer -> bitmapConsumer.accept(lastFrame.get()));
+            continuation.dispatch(bitmapConsumer -> bitmapConsumer.accept(recentFrame.get()));
         }
 
     }
+<<<<<<< HEAD
 
     @Override
     public void runOpMode() {
@@ -96,3 +136,6 @@ public class AutoAlign extends LinearOpMode {
         }
     }
 }
+=======
+}
+>>>>>>> d340caff4067e2962a41607229d2c0bc2f4bc3ec
