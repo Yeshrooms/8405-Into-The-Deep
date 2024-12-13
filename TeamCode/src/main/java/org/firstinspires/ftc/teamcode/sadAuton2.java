@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Lift;
 
 @Config
 @Autonomous
-public class sadAuton extends LinearOpMode {
+public class sadAuton2 extends LinearOpMode {
 
     GoBildaPinpointDriver odo;
     Drivetrain drive;

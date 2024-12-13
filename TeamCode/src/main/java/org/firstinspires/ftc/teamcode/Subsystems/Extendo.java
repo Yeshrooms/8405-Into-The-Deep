@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Extendo {
     public DcMotor extendo;
 
-    public static double dick = 0.3;
+    public static double dick = 0.5;
     public static double bigDick = 0.4;
 
     public void init(HardwareMap map) {

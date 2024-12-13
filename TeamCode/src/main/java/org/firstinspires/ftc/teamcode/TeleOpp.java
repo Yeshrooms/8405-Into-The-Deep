@@ -4,6 +4,8 @@ import static org.firstinspires.ftc.teamcode.Subsystems.Lift.AUTON_POS;
 import static org.firstinspires.ftc.teamcode.Subsystems.Lift.LiftStates.AUTON;
 import static org.firstinspires.ftc.teamcode.Subsystems.Lift.LiftStates.AUTON_POS_LOW;
 import static org.firstinspires.ftc.teamcode.Subsystems.Lift.LiftStates.DOWN;
+import static org.firstinspires.ftc.teamcode.Subsystems.Lift.LiftStates.POS1;
+import static org.firstinspires.ftc.teamcode.Subsystems.Lift.POS1_POS;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -15,7 +17,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Claw;
 import org.firstinspires.ftc.teamcode.Subsystems.Extendo;
 //import org.firstinspires.ftc.teamcode.Subsystems.Lift;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
-import org.firstinspires.ftc.teamcode.Subsystems.ClawRotate;
+//import org.firstinspires.ftc.teamcode.Subsystems.ClawRotate;
 import org.firstinspires.ftc.teamcode.Subsystems.Lift;
 
 @Config
@@ -27,7 +29,7 @@ public class TeleOpp extends LinearOpMode {
     private Drivetrain drive = new Drivetrain();
     private Lift lift = new Lift();
     private Extendo extendo = new Extendo();
-    private ClawRotate clawrotate = new ClawRotate();
+//    private ClawRotate clawrotate = new ClawRotate();
     private Claw claw = new Claw();
 
     public static double f = 0.00;
@@ -43,7 +45,7 @@ public class TeleOpp extends LinearOpMode {
         drive.init(hardwareMap);
        lift.init(hardwareMap);
         extendo.init(hardwareMap);
-        clawrotate.init(hardwareMap);
+//        clawrotate.init(hardwareMap);
        claw.init(hardwareMap);
 
         waitForStart();
@@ -52,7 +54,7 @@ public class TeleOpp extends LinearOpMode {
 
             lift.loop();
             if (gamepad1.right_bumper) {
-                lift.update(AUTON);
+                lift.update(POS1);
             } if (gamepad1.left_bumper){
                 lift.update(AUTON_POS_LOW);
             } if (gamepad1.dpad_up){
@@ -69,11 +71,11 @@ public class TeleOpp extends LinearOpMode {
 //
            claw.move(gamepad1.a, gamepad1.x);
 
-            if(gamepad1.b) { // left
-                clawrotate.rotate(true, false);
-            } else if(gamepad1.y) { // right
-                clawrotate.rotate(false, true);
-            }
+//            if(gamepad1.b) { // left
+//                clawrotate.rotate(true, false);
+//            } else if(gamepad1.y) { // right
+//                clawrotate.rotate(false, true);
+//            }
 
             telemetry.addData("Claw position", claw.getPosition());
             telemetry.addData("Power", power);
@@ -81,10 +83,10 @@ public class TeleOpp extends LinearOpMode {
             telemetry.addData("Turn", turn);
            telemetry.addData("a pressed?", gamepad1.a);
            telemetry.addData("pressed", gamepad1.right_bumper);
-           telemetry.addData("clawRotate", clawrotate.getPosition());
+//           telemetry.addData("clawRotate", clawrotate.getPosition());
 
            telemetry.addData("liftpos", lift.position());
-           telemetry.addData("claw pos", clawrotate.getPosition());
+//           telemetry.addData("claw pos", clawrotate.getPosition());
            telemetry.addData("lift pos", lift.position());
             telemetry.addData("drive pos", drive.getPosition());
            telemetry.update();

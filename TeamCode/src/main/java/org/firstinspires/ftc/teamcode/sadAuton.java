@@ -4,6 +4,8 @@ import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.tel
 import static org.firstinspires.ftc.teamcode.Subsystems.Drivetrain.DriveStates.AWAY_BAR_1;
 import static org.firstinspires.ftc.teamcode.Subsystems.Drivetrain.DriveStates.TO_BAR_1;
 import static org.firstinspires.ftc.teamcode.Subsystems.Lift.LiftStates.AUTON;
+import static org.firstinspires.ftc.teamcode.Subsystems.Lift.LiftStates.AUTON_DOWN;
+import static org.firstinspires.ftc.teamcode.Subsystems.Lift.LiftStates.AUTON_POS_LOW;
 import static org.firstinspires.ftc.teamcode.Subsystems.Lift.LiftStates.DOWN;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -35,13 +37,13 @@ public class sadAuton extends LinearOpMode {
     Drivetrain drive;
     Lift lift;
     Extendo extend;
-    ClawRotate clawRotate;
+//    ClawRotate clawRotate;
     Claw claw;
 
     private int tick = 0;
 
-    public static float out = 0.45F;
-    public static float in = 0;
+    public static float out = 0.55F;
+    public static float in = 0.2F;
     public static int number = 4;
 
     @Override
@@ -52,23 +54,25 @@ public class sadAuton extends LinearOpMode {
         drive = new Drivetrain();
         lift = new Lift();
         extend = new Extendo();
-        clawRotate = new ClawRotate();
+//        clawRotate = new ClawRotate();
         claw = new Claw();
         drive.init(hardwareMap);
         lift.init(hardwareMap);
         extend.init(hardwareMap);
-        clawRotate.init(hardwareMap);
+//        clawRotate.init(hardwareMap);
         claw.init(hardwareMap);
         boolean yay = false;
         int tick = 0;
         boolean open = false;
+        out = 0.55F;
+
         waitForStart();
 
 
 //        odo.resetPosAndIMU();
 //
         while (opModeIsActive()) {
-//            if (!yay) {
+            //            if (!yay) {
 //                lift.update(AUTON);
 //                int liftError = lift.loop();
 //                if (liftError < 10) {
@@ -96,20 +100,29 @@ public class sadAuton extends LinearOpMode {
 //            telemetry.update();
 //        }
             boolean hi = lift.loop();
-            clawRotate.rotateRight();
+//            clawRotate.rotateRight();
 
             if (drive.loop(telemetry) && hi) {
-                lift.update(AUTON);
-                if (drive.target < drive.points.length) {
-                    extend.extend(out,in);
+                if (drive.target < number+1) {
+                    lift.update(AUTON);
+                }
+
+                if (drive.target < drive.points.length-1) {
 //                    clawRotate.rotateRight();
                     drive.target++;
-                    if (drive.target == number){
-                        out = 0;
+                    if (drive.target == number-1){
                         extend.extend(out,in);
                     }
                     if (drive.target == number){
+                        lift.update(AUTON_DOWN);
+                        extend.extend(0,in);
+                    }
+                    if (drive.target == number+1){
                         claw.open();
+                        extend.extend(0, 0.2F);
+                        drive.target++;
+//                        clawRotate.rotateLeft();
+                        lift.update(DOWN);
                     }
                 }
             }
@@ -120,12 +133,14 @@ public class sadAuton extends LinearOpMode {
 //            telemetry.addData("Heading error", angleError);
 //            telemetry.addData("Left power", leftPower);
 //            telemetry.addData("Right power", rightPower);
+            telemetry.addData("drive.target", drive.target);
             telemetry.update();
 //
 //            if (Math.abs(distanceError) < 5 && Math.abs(angleError) < 1) {
 //                break;
 //            }
         }
+        lift.update(DOWN);
         drive.setPowers(0.0);
     }
 }

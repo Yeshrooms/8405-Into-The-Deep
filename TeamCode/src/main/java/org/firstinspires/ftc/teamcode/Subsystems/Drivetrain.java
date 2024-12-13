@@ -35,7 +35,7 @@ public class Drivetrain {
 
     private double[] statesArray = {AWAY_BAR_1, -SIXTY};
 
-    public static double norm = 1.4;
+    public static double norm = 1.5;
     public static double rightNorm = 1.3;
 
 
@@ -45,10 +45,13 @@ public class Drivetrain {
         new Pose2d(0.0, 11.0, Rotation2d.fromDegrees(0)),
         new Pose2d(0.0, 12.0, Rotation2d.fromDegrees(0)),
         new Pose2d(0.0, TO_BAR_1, Rotation2d.fromDegrees(0)),
+            new Pose2d(0.0, TO_BAR_1, Rotation2d.fromDegrees(0)),
+            new Pose2d(0.0, TO_BAR_1, Rotation2d.fromDegrees(0)),
+            new Pose2d(0.0,15.0,Rotation2d.fromDegrees(0)),
 
         // NEW: Park Points
-        new Pose2d(0.0, TO_BAR_1 * 0.25, Rotation2d.fromDegrees(90)), // move back then turn right
-        new Pose2d(0.0, (originalMovedDistance * 1.5), Rotation2d.fromDegrees(90)),
+//        new Pose2d(0.0, TO_BAR_1 * 0.25, Rotation2d.fromDegrees(90)), // move back then turn right
+//        new Pose2d(0.0, (originalMovedDistance * 1.5), Rotation2d.fromDegrees(90)),
     };
 
 
@@ -57,7 +60,7 @@ public class Drivetrain {
 
     public static double targetAngle = 0;
 
-    public static double TO_BAR_1 = 20.5, AWAY_BAR_1 = 7, RIGHT_BLOCK_1 = 0, UP_BLOCK = 0, RIGHT_BLOCK_2 = 0, PUSH_BLOCK = 0, ZERO = 0, THIRTY = 30, SIXTY = 60;
+    public static double TO_BAR_1 = 18.8, AWAY_BAR_1 = 7, RIGHT_BLOCK_1 = 0, UP_BLOCK = 0, RIGHT_BLOCK_2 = 0, PUSH_BLOCK = 0, ZERO = 0, THIRTY = 30, SIXTY = 60;
 
     public Drivetrain.DriveStates driveStates = DriveStates.TO_BAR_1;
 
