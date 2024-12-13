@@ -1,53 +1,40 @@
 package org.firstinspires.ftc.teamcode.opencv;
 
-import android.graphics.Canvas;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.VisionProcessor;
-import org.opencv.core.Mat;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.opencv.core.Mat;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Camera Feed Display", group = "Vision")
-public class CameraTest extends OpMode {
+public class CameraFeedDisplay extends OpMode {
 
     private OpenCvCamera webcam;
-    private SpecDetect specDetect;
 
     @Override
     public void init() {
         telemetry.addLine("Initializing...");
         telemetry.update();
 
+        // Get the camera monitor view ID (needed to display the camera feed on the Driver Station)
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 
+        // Create the webcam instance using EasyOpenCV
         webcam = OpenCvCameraFactory.getInstance().createWebcam(
-                hardwareMap.get(WebcamName.class, "Webcam 1"),
-                cameraMonitorViewId);
+                hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
 
-        specDetect = new SpecDetect(telemetry);
-
-        webcam.setPipeline(new VisionProcessor() {
+        // Set the webcam's pipeline (to just show the frame as it is, without processing)
+        webcam.setPipeline(new OpenCvCamera.PipelinOvee() {
             @Override
-            public Mat processFrame(Mat inputFrame, long time) {
-                return (Mat) specDetect.processFrame(inputFrame, time);
-            }
-
-            @Override
-            public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
-                specDetect.onDrawFrame(canvas, onscreenWidth, onscreenHeight, scaleBmpPxToCanvasPx, scaleCanvasDensity, userContext);
-            }
-
-            @Override
-            public void init(int width, int height, CameraCalibration calibration) {
-                specDetect.init(width, height, calibration);
+            public Mat processFrame(Mat inputFrame) {
+                // No processing, just return the frame
+                return inputFrame;
             }
         });
+
+        // Open the camera and start streaming
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -66,11 +53,13 @@ public class CameraTest extends OpMode {
 
     @Override
     public void loop() {
-        specDetect.update();
+        // Camera feed will automatically be shown on the Driver Station screen.
+        // You can use this method to add more logic if needed during the TeleOp period.
     }
 
     @Override
     public void stop() {
+        // Stop the camera when the OpMode is stopped
         if (webcam != null) {
             webcam.stopStreaming();
             webcam.closeCameraDevice();
@@ -79,4 +68,3 @@ public class CameraTest extends OpMode {
         telemetry.update();
     }
 }
-
