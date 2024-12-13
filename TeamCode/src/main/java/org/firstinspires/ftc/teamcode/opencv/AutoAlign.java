@@ -41,28 +41,28 @@ public class AutoAlign extends LinearOpMode {
                 .build();
         // vision portal that connects webcam/ vision procesisng pipeline
 
-        double armPosition = 0.5;
+        double armPos = 0.5;
         FtcDashboard.getInstance().startCameraStream(cameraViewer, 0);
 
         waitForStart();
 
         while (opModeIsActive()) {
-            RotatedRect detectedObject = blockFinder.getClosestBlock();
-            Double objectAngle = blockFinder.getAngle();
+            RotatedRect obj = blockFinder.getClosestBlock();
+            Double ang = blockFinder.getAngle();
 
             if (blockFinder.getSize() > 5000) {
-                if (90 < objectAngle && objectAngle < 180) {
-                    double adjustment = 90 - (objectAngle - 90);
+                if (90 < ang && ang < 180) {
+                    double adjustment = 90 - (ang - 90);
                     adjustment = adjustment / 1800;
-                    armPosition -= adjustment;
+                    armPos -= adjustment;
                 }
-                if (0 < objectAngle && objectAngle < 90) {
-                    double adjustment = objectAngle / 1800;
-                    armPosition += adjustment;
+                if (0 < ang && ang < 90) {
+                    double adjustment = ang / 1800;
+                    armPos += adjustment;
                 }
             }
 
-            servo.setPosition(armPosition);
+            servo.setPosition(armPos);
             blockFinder.update();
             sleep(30);
         }
