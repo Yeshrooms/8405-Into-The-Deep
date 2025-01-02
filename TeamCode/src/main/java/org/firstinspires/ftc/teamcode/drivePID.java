@@ -21,7 +21,7 @@ public class drivePID extends LinearOpMode{
 
     private Drivetrain drive = new Drivetrain();
 
-    public static int targetDistance = 20;
+    public static int targetDistance = 48;
 
     public static double targetAngle = 0;
 
@@ -29,8 +29,10 @@ public class drivePID extends LinearOpMode{
     private PIDController linearController;
     private PIDController angularController;
 
-    public static double lp= 0.0305, li = 0.0, ld = 0.0;
-    public static double ap= 0.0078, ai = 0.0, ad = 0.0;
+    public static double lp= 0.02, li = 0.0, ld = 0.0;
+    public static double ap= 0.03, ai = 0.0, ad = 0.0;
+
+    public static double norm = 1.65;
 
 
     public void setTarget(int targetPos) {
@@ -47,8 +49,8 @@ public class drivePID extends LinearOpMode{
         odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
 
         // configure
-        odo.setOffsets(-84.0, -168.0);
-        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        odo.setOffsets(-101.6, -63.5);
+        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
         odo.resetPosAndIMU();
 
@@ -63,7 +65,7 @@ public class drivePID extends LinearOpMode{
 
             odo.update();
             Pose2D currentPosition = odo.getPosition();
-            double currentDistance = -currentPosition.getY(DistanceUnit.INCH);
+            double currentDistance = currentPosition.getY(DistanceUnit.INCH)*norm;
             double currentHeading = currentPosition.getHeading(AngleUnit.DEGREES);
 
             // distance

@@ -18,6 +18,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
+import java.util.Locale;
+
 @Config
 
 public class Drivetrain {
@@ -34,22 +36,24 @@ public class Drivetrain {
     public IMU imu;
 
     private double[] statesArray = {AWAY_BAR_1, -SIXTY};
+//
+//    public static double norm = 1.4;
+//    public static double rightNorm = 1.3;
 
-    public static double norm = 1.4;
-    public static double rightNorm = 1.3;
 
 
+//    public Pose2d[] points = {
+//        new Pose2d(0.0, 10.0, Rotation2d.fromDegrees(0)),
+//        new Pose2d(0.0, 11.0, Rotation2d.fromDegrees(0)),
+//        new Pose2d(0.0, 12.0, Rotation2d.fromDegrees(0)),
+//        new Pose2d(0.0, TO_BAR_1, Rotation2d.fromDegrees(0)),
+//
+//        // NEW: Park Points
+//        new Pose2d(0.0, TO_BAR_1 * 0.25, Rotation2d.fromDegrees(90)), // move back then turn right
+//        new Pose2d(0.0, (originalMovedDistance * 1.5), Rotation2d.fromDegrees(90)),
+//    };
 
-    public Pose2d[] points = {
-        new Pose2d(0.0, 10.0, Rotation2d.fromDegrees(0)),
-        new Pose2d(0.0, 11.0, Rotation2d.fromDegrees(0)),
-        new Pose2d(0.0, 12.0, Rotation2d.fromDegrees(0)),
-        new Pose2d(0.0, TO_BAR_1, Rotation2d.fromDegrees(0)),
 
-        // NEW: Park Points
-        new Pose2d(0.0, TO_BAR_1 * 0.25, Rotation2d.fromDegrees(90)), // move back then turn right
-        new Pose2d(0.0, (originalMovedDistance * 1.5), Rotation2d.fromDegrees(90)),
-    };
 
 
     private GoBildaPinpointDriver odo;
@@ -126,10 +130,13 @@ public class Drivetrain {
     private PIDController yLinearController;
     private PIDController angularController;
 
+
     public static double lp= 0.037, li = 0.0, ld = 0.0; //0.024
     public static double ap= 0.048, ai = 0.0, ad = 0.0;
 
     public void init(HardwareMap map) {
+
+
         fL = map.dcMotor.get("leftFront");
         bL = map.dcMotor.get("leftBack");
         fR = map.dcMotor.get("rightFront");
@@ -156,11 +163,11 @@ public class Drivetrain {
         bL.setDirection(DcMotorSimple.Direction.REVERSE);
         bR.setDirection(DcMotorSimple.Direction.REVERSE);
 
-
+//
         odo = map.get(GoBildaPinpointDriver.class,"odo");
 
         // configure
-        odo.setOffsets(-84.0, -168.0);
+        odo.setOffsets(-84.0, -84.0);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
         odo.resetPosAndIMU();
@@ -170,7 +177,7 @@ public class Drivetrain {
         angularController = new PIDController(ap, ai, ad);
     }
 
-    public boolean loop(Telemetry telemetry){
+    /*public boolean loop(Telemetry telemetry){
 //        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         odo.update();
         Pose2d targetPose = points[(int)target];
@@ -207,143 +214,8 @@ public class Drivetrain {
 
         return distanceError < 1 && angleError < 5;
 
-//        // distance
-//
-//        double forwardPower = -yLinearController.calculate(yDistance, yTarget);
-//        // angle
-//        double anglePower = angularController.calculate(Math.toDegrees(currentHeading), targetAngle);
-
-//
-//        // Rotate the movement direction counter to the bot's rotation
-//        double rotX = forwardPower * Math.cos(currentHeading) - strafePower * Math.sin(currentHeading);
-//        double rotY = forwardPower * Math.sin(currentHeading) + strafePower * Math.cos(currentHeading);
-//
-//        rotX = rotX * 1.1;  // Counteract imperfect strafing
-//
-//        // Denominator is the largest motor power (absolute value) or 1
-//        // This ensures all the powers maintain the same ratio,
-//        // but only if at least one is out of the range [-1, 1]
-//        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(anglePower), 1);
-//        double frontLeftPower = (rotY + rotX + anglePower) / denominator;
-//        double backLeftPower = (rotY - rotX + anglePower) / denominator;
-//        double frontRightPower = (rotY - rotX - anglePower) / denominator;
-//        double backRightPower = (rotY + rotX - anglePower) / denominator;
-//
-//        fL.setPower(frontLeftPower);
-//        bL.setPower(backLeftPower);
-//        fR.setPower(frontRightPower);
-//        bR.setPower(backRightPower);
-//
-//        boolean atX = Math.abs(xTarget - xDistance) < 1.5;
-//        boolean atY = Math.abs(yTarget - yDistance) < 1.5;
-//        boolean atHeading = Math.abs(targetAngle - currentHeading) < 5;
-//
-//        telemetry.addData("xtar", xTarget);
-//        telemetry.addData("ytar", yTarget);
-//        telemetry.addData("headingtar", targetAngle);
-//        telemetry.addData("x", xDistance);
-//        telemetry.addData("y", yDistance);
-//        telemetry.addData("heading", currentHeading);
-//        telemetry.addData("forPow", forwardPower);
-//        telemetry.addData("strPow", strafePower);
-//        telemetry.addData("angPow", anglePower);
-//        telemetry.addData("atXerror", atX);
-//        telemetry.addData("atYerror", atY);
-//        telemetry.addData("atHeadingError", atHeading);
-//        return atX && atY && atHeading;
     }
-
-//    public boolean loop(Telemetry telemetry){
-////        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-//        odo.update();
-//        Pose2d targetPose = points[target];
-//        double xTarget = targetPose.getX();
-//        double yTarget = targetPose.getY();
-//        double targetAngle = Math.toDegrees(targetPose.getHeading());
-//        Pose2D currentPosition = odo.getPosition();
-//        double yDistance = -currentPosition.getY(DistanceUnit.INCH);
-//        double xDistance = -currentPosition.getX(DistanceUnit.INCH);
-//        double currentHeading = currentPosition.getHeading(AngleUnit.RADIANS);
-//
-//        // distance
-//
-//        double forwardPower = -yLinearController.calculate(yDistance, yTarget);
-//        double strafePower = -xLinearController.calculate(xDistance, xTarget);
-//
-//        // angle
-//        double anglePower = angularController.calculate(Math.toDegrees(currentHeading), targetAngle);
-//
-//
-//        // Rotate the movement direction counter to the bot's rotation
-//        double rotX = forwardPower * Math.cos(currentHeading) - strafePower * Math.sin(currentHeading);
-//        double rotY = forwardPower * Math.sin(currentHeading) + strafePower * Math.cos(currentHeading);
-//
-//        rotX = rotX * 1.1;  // Counteract imperfect strafing
-//
-//        // Denominator is the largest motor power (absolute value) or 1
-//        // This ensures all the powers maintain the same ratio,
-//        // but only if at least one is out of the range [-1, 1]
-//        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(anglePower), 1);
-//        double frontLeftPower = (rotY + rotX + anglePower) / denominator;
-//        double backLeftPower = (rotY - rotX + anglePower) / denominator;
-//        double frontRightPower = (rotY - rotX - anglePower) / denominator;
-//        double backRightPower = (rotY + rotX - anglePower) / denominator;
-//
-//        fL.setPower(frontLeftPower);
-//        bL.setPower(backLeftPower);
-//        fR.setPower(frontRightPower);
-//        bR.setPower(backRightPower);
-//
-//        boolean atX = Math.abs(xTarget - xDistance) < 4;
-//        boolean atY = Math.abs(yTarget - yDistance) < 8;
-//        boolean atHeading = Math.abs(targetAngle - currentHeading) < 10;
-//
-//        telemetry.addData("xtar", xTarget);
-//        telemetry.addData("ytar", yTarget);
-//        telemetry.addData("headingtar", targetAngle);
-//        telemetry.addData("x", xDistance);
-//        telemetry.addData("y", yDistance);
-//        telemetry.addData("heading", currentHeading);
-//        telemetry.addData("forPow", forwardPower);
-//        telemetry.addData("strPow", strafePower);
-//        telemetry.addData("angPow", anglePower);
-//        telemetry.addData("atXerror", atX);
-//        telemetry.addData("atYerror", atY);
-//        telemetry.addData("atHeadingError", atHeading);
-//        return atX && atY && atHeading;
-//    }
-
-
-//    public int loop(){
-//        controller.setPID(p, i, d);
-//        //            odo.update();
-////            Pose2D currentPosition = odo.getPosition();
-////            double currentDistance = currentPosition.getX(DistanceUnit.MM);
-////            double currentHeading = currentPosition.getHeading(AngleUnit.DEGREES);
-////
-////            // distance
-////            double distanceError = targetDistance - currentDistance;
-////            double forwardPower = linearController.calculate(distanceError);
-////
-////            // angle
-////            double angleError = targetAngle - currentHeading;
-////            double anglePower = angularController.calculate(angleError);
-////
-////            // maths more like meths
-////            double leftPower = forwardPower - anglePower;
-////            double rightPower = forwardPower + anglePower;
-////            drive.setPowers(leftPower, leftPower, rightPower, rightPower);
-//        int pos = .position();
-//        double pid = controller.calculate(pos, target);
-//        double ff = Math.cos(Math.toRadians(target / ticks_in_degree)) * f;
-//
-//        double power = pid + ff;
-//
-//        lift.setPower(power);
-//        telemetry.addData("pos", pos);
-//        telemetry.addData("power", power);
-//        telemetry.update();
-//    }
+*/
 
     public double getHeading(){
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
@@ -353,13 +225,6 @@ public class Drivetrain {
         return bL.getCurrentPosition();
     }
 
-//    public double get1Position() {
-//        return -encoder.getCurrentPosition();
-//    }
-//
-//    public double get2Position() {
-//        return -encoder2.getCurrentPosition();
-//    }
 
     public void moveMoveMOVE(double power){
         double fLPow = power;
@@ -370,13 +235,13 @@ public class Drivetrain {
     }
     //o
     // left joystick controls forward/backward and strafe, right controls turning
-    public void move(double power, double strafe, double turn) {
+    public void move(double power, double strafe, double turn, Telemetry telemetry) {
         // normalize so doesn't exceed 1
         //double norm = Math.max(Math.abs(power) + Math.abs(strafe) + Math.abs(turn), 1);
         double norm = 1;
         double fLPow = power + strafe + turn;
         double bLPow = power - strafe + turn;
-        double fRPow = (power - strafe - turn)*rightNorm;
+        double fRPow = power - strafe - turn;
         double bRPOw = power + strafe - turn;
 
         setPowers(-fLPow/norm, bLPow/norm, fRPow/norm, -bRPOw/norm);

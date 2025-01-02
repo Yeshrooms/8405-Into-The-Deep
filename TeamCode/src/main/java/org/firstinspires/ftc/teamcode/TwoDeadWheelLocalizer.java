@@ -51,11 +51,11 @@ public final class TwoDeadWheelLocalizer implements Localizer {
         perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "leftFront")));
 
         // TODO: reverse encoder directions if needed
-        //   par.setDirection(DcMotorSimple.Direction.REVERSE);
+           par.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.imu = imu;
 
-        this.inPerTick = inPerTick;
+        this.inPerTick = 1/333.3;
 
         FlightRecorder.write("TWO_DEAD_WHEEL_PARAMS", PARAMS);
     }
