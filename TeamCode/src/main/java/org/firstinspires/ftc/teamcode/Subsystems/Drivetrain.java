@@ -35,19 +35,19 @@ public class Drivetrain {
 
     private double[] statesArray = {AWAY_BAR_1, -SIXTY};
 
-    public static double norm = 1.5;
-    public static double rightNorm = 1.3;
+    public static double norm = 8.0/5;
+//    public static double rightNorm = 1.3;
 
 
 
     public Pose2d[] points = {
-        new Pose2d(0.0, 10.0, Rotation2d.fromDegrees(0)),
-        new Pose2d(0.0, 11.0, Rotation2d.fromDegrees(0)),
-        new Pose2d(0.0, 12.0, Rotation2d.fromDegrees(0)),
-        new Pose2d(0.0, TO_BAR_1, Rotation2d.fromDegrees(0)),
+//        new Pose2d(0.0, 10.0, Rotation2d.fromDegrees(0)),
+//        new Pose2d(0.0, 11.0, Rotation2d.fromDegrees(0)),
+//        new Pose2d(0.0, 12.0, Rotation2d.fromDegrees(0)),
+//        new Pose2d(0.0, TO_BAR_1, Rotation2d.fromDegrees(0)),
             new Pose2d(0.0, TO_BAR_1, Rotation2d.fromDegrees(0)),
             new Pose2d(0.0, TO_BAR_1, Rotation2d.fromDegrees(0)),
-            new Pose2d(0.0,15.0,Rotation2d.fromDegrees(0)),
+//            new Pose2d(0.0,15.0,Rotation2d.fromDegrees(0)),
 
         // NEW: Park Points
 //        new Pose2d(0.0, TO_BAR_1 * 0.25, Rotation2d.fromDegrees(90)), // move back then turn right
@@ -60,8 +60,8 @@ public class Drivetrain {
 
     public static double targetAngle = 0;
 
-    public static double TO_BAR_1 = 18.8, AWAY_BAR_1 = 7, RIGHT_BLOCK_1 = 0, UP_BLOCK = 0, RIGHT_BLOCK_2 = 0, PUSH_BLOCK = 0, ZERO = 0, THIRTY = 30, SIXTY = 60;
-
+    public static double TO_BAR_1 = 24.7, AWAY_BAR_1 = 3.8, RIGHT_BLOCK_1 = 0, UP_BLOCK = 0, RIGHT_BLOCK_2 = 0, PUSH_BLOCK = 0, ZERO = 0, THIRTY = 30, SIXTY = 60;
+    //(INCEASE TO BAR IF LOWER THN LIKE 13.3)
     public Drivetrain.DriveStates driveStates = DriveStates.TO_BAR_1;
 
 
@@ -127,10 +127,11 @@ public class Drivetrain {
     }
 
     private PIDController yLinearController;
+    private PIDController xLinearController;
     private PIDController angularController;
 
-    public static double lp= 0.037, li = 0.0, ld = 0.0; //0.024
-    public static double ap= 0.048, ai = 0.0, ad = 0.0;
+    public static double lp= 0.021, li = 0.04, ld = 0.0; //0.024
+    public static double ap= 0.02, ai = 0.0, ad = 0.0;
 
     public void init(HardwareMap map) {
         fL = map.dcMotor.get("leftFront");
@@ -169,6 +170,7 @@ public class Drivetrain {
         odo.resetPosAndIMU();
 
         yLinearController = new PIDController(lp, li, ld);
+        xLinearController = new PIDController(lp,li,ld);
 
         angularController = new PIDController(ap, ai, ad);
     }
@@ -181,14 +183,14 @@ public class Drivetrain {
         double targetAngle = Math.toDegrees(targetPose.getHeading());
         Pose2D currentPosition = odo.getPosition();
 
-        double currentDistance = -currentPosition.getY(DistanceUnit.INCH);
-        double currentHeading = currentPosition.getHeading(AngleUnit.DEGREES);
+        double currentDistance = -currentPosition.getY(DistanceUnit.INCH)*norm;
+        double currentHeading = -currentPosition.getHeading(AngleUnit.DEGREES);
 
         // distance
         double distanceError = yTarget - currentDistance;
         double forwardPower = yLinearController.calculate(currentDistance, yTarget);
-        if (forwardPower > 0.6){
-            forwardPower = 0.6;
+        if (forwardPower > 0.45){
+            forwardPower = 0.45;
         }
         // angle
         double angleError = targetAngle - currentHeading;
@@ -198,17 +200,19 @@ public class Drivetrain {
         double leftPower = forwardPower - anglePower;
         double rightPower = forwardPower + anglePower;
 
-        fL.setPower(-leftPower*norm);
-        bL.setPower(leftPower*norm);
-        fR.setPower(rightPower*norm*rightNorm);
-        bR.setPower(-rightPower*norm);
+        fL.setPower(leftPower);
+        bL.setPower(-leftPower);
+        fR.setPower(-rightPower);
+        bR.setPower(rightPower);
         telemetry.addData("forward power" , forwardPower);
         telemetry.addData("left power" , leftPower);
         telemetry.addData("right power" , rightPower);
         telemetry.addData("disntance reorrr", distanceError);
+        telemetry.addData("position", currentDistance);
+        telemetry.addData("where i want to go", yTarget);
         telemetry.addData("angle error", angleError);
 
-        return distanceError < 1 && angleError < 5;
+        return distanceError < 0.6 && angleError < 5;
 
 //        // distance
 //
@@ -259,7 +263,7 @@ public class Drivetrain {
 //    public boolean loop(Telemetry telemetry){
 ////        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 //        odo.update();
-//        Pose2d targetPose = points[target];
+//        Pose2d targetPose = points[(int)target];
 //        double xTarget = targetPose.getX();
 //        double yTarget = targetPose.getY();
 //        double targetAngle = Math.toDegrees(targetPose.getHeading());
@@ -377,9 +381,10 @@ public class Drivetrain {
         // normalize so doesn't exceed 1
         //double norm = Math.max(Math.abs(power) + Math.abs(strafe) + Math.abs(turn), 1);
         double norm = 1;
+        power = -power;
         double fLPow = power + strafe + turn;
         double bLPow = power - strafe + turn;
-        double fRPow = (power - strafe - turn)*rightNorm;
+        double fRPow = (power - strafe - turn);
         double bRPOw = power + strafe - turn;
 
         setPowers(-fLPow/norm, bLPow/norm, fRPow/norm, -bRPOw/norm);

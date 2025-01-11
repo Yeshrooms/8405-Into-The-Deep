@@ -13,8 +13,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
 @Config
-@Autonomous
-public class Lift extends SubsystemBase {
+
+public class Lift {
     public DcMotor lift;
 
     private PIDController controller;

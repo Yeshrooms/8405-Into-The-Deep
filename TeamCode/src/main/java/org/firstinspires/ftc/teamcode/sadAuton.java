@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
+import org.firstinspires.ftc.teamcode.Subsystems.ArmGroup;
 import org.firstinspires.ftc.teamcode.Subsystems.Claw;
 import org.firstinspires.ftc.teamcode.Subsystems.ClawRotate;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
@@ -35,16 +36,19 @@ public class sadAuton extends LinearOpMode {
 
     GoBildaPinpointDriver odo;
     Drivetrain drive;
-    Lift lift;
+//    Lift lift;
     Extendo extend;
 //    ClawRotate clawRotate;
     Claw claw;
+    ArmGroup arm;
 
-    private int tick = 0;
-
-    public static float out = 0.55F;
-    public static float in = 0.2F;
-    public static int number = 4;
+    private int num = 0;
+//
+//    private int tick = 0;
+//
+//    public static float out = 0.55F;
+//    public static float in = 0.2F;
+    public static int number = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -52,19 +56,21 @@ public class sadAuton extends LinearOpMode {
 
         // init
         drive = new Drivetrain();
-        lift = new Lift();
+
+//        lift = new Lift();
         extend = new Extendo();
 //        clawRotate = new ClawRotate();
         claw = new Claw();
+        arm = new ArmGroup();
         drive.init(hardwareMap);
-        lift.init(hardwareMap);
-        extend.init(hardwareMap);
+        arm.init(hardwareMap);
 //        clawRotate.init(hardwareMap);
         claw.init(hardwareMap);
-        boolean yay = false;
-        int tick = 0;
-        boolean open = false;
-        out = 0.55F;
+        extend.init(hardwareMap);
+//        boolean yay = false;
+//        int tick = 0;
+//        boolean open = false;
+//        out = 0.55F;
 
         waitForStart();
 
@@ -72,6 +78,10 @@ public class sadAuton extends LinearOpMode {
 //        odo.resetPosAndIMU();
 //
         while (opModeIsActive()) {
+
+            if (num < 2){
+                arm.move(true, false, false, false);
+            }
             //            if (!yay) {
 //                lift.update(AUTON);
 //                int liftError = lift.loop();
@@ -99,32 +109,47 @@ public class sadAuton extends LinearOpMode {
 //
 //            telemetry.update();
 //        }
-            boolean hi = lift.loop();
+//            boolean hi = lift.loop();
 //            clawRotate.rotateRight();
 
-            if (drive.loop(telemetry) && hi) {
-                if (drive.target < number+1) {
-                    lift.update(AUTON);
+            if (drive.loop(telemetry) && extend.loop()) {
+//                if (drive.target < number+1) {
+//                    lift.update(AUTON);
+//                }
+                if (num < 2) {
+//                arm.move(false, false, true,);
+                    extend.update(Extendo.ExtendoStates.AUTON);
+                    if (drive.target < 1) {
+                        drive.target++;
+                    }
+                    num++;
+                }
+                if (num == 2){
+                    claw.move(true, false);
+                    extend.update(Extendo.ExtendoStates.ZERO);
+                    arm.initpos();
                 }
 
-                if (drive.target < drive.points.length-1) {
-//                    clawRotate.rotateRight();
-                    drive.target++;
-                    if (drive.target == number-1){
-                        extend.extend(out,in);
-                    }
-                    if (drive.target == number){
-                        lift.update(AUTON_DOWN);
-                        extend.extend(0,in);
-                    }
-                    if (drive.target == number+1){
-                        claw.open();
-                        extend.extend(0, 0.2F);
-                        drive.target++;
-//                        clawRotate.rotateLeft();
-                        lift.update(DOWN);
-                    }
-                }
+
+
+//                if (drive.target < drive.points.length-1) {
+////                    clawRotate.rotateRight();
+//                    drive.target++;
+//                    if (drive.target == number-1){
+//                        extend.extend(out,in);
+//                    }
+//                    if (drive.target == number){
+//                        lift.update(AUTON_DOWN);
+//                        extend.extend(0,in);
+//                    }
+//                    if (drive.target == number+1){
+//                        claw.open();
+//                        extend.extend(0, 0.2F);
+//                        drive.target++;
+////                        clawRotate.rotateLeft();
+//                        lift.update(DOWN);
+//                    }
+//                }
             }
 
 //            telemetry.addData("Current distance", currentDistance);
@@ -140,7 +165,7 @@ public class sadAuton extends LinearOpMode {
 //                break;
 //            }
         }
-        lift.update(DOWN);
+//        lift.update(DOWN);
         drive.setPowers(0.0);
     }
 }
